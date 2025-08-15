@@ -10,6 +10,15 @@ const db = new sqlite3.Database('./data/db.sqlite3', (err) => {
     }
 });
 
+function limpiarNombreJuego(nombre) {
+    return nombre
+        .toLowerCase()
+        .normalize('NFD')                  
+        .replace(/[\u0300-\u036f]/g, '')     
+        .replace(/[™:\/\-\(\)]+/g, '')                
+        .trim();
+}
+
 async function importarJuegos() {
     try {
         console.log('Descargando lista de juegos de Steam...');
@@ -29,7 +38,8 @@ async function importarJuegos() {
         db.serialize(() => {
             for (const game of games) {
                 if (game.name && game.name.trim() !== '') {
-                    insert.run(game.appid, game.name);
+                    const nombreLimpio = limpiarNombreJuego(game.name);
+                    insert.run(game.appid, nombreLimpio);
                     count++;
                 }
             }

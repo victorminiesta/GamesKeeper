@@ -27,7 +27,7 @@ router.get('/buscar', (req, res) => {
         SELECT appid, name FROM steam_games
         WHERE name LIKE ?
         AND favoritos = 0 -- Solo juegos que no están en favoritos
-        LIMIT 50
+        LIMIT 400
     `;
 
     const searchTerm = `%${query}%`;
@@ -59,7 +59,7 @@ router.post('/:appid', async (req, res) => {
         const data = gameData[appid].data;
 
         db.run(`
-            INSERT INTO mis_juegos (appid, nombre, description, header_image, price)
+            INSERT OR IGNORE INTO mis_juegos (appid, nombre, description, header_image, price)
             VALUES (?, ?, ?, ?, ?)`, 
             [
                 appid,

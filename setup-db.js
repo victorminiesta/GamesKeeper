@@ -26,8 +26,7 @@ db.serialize(() => {
             description TEXT,
             header_image TEXT,
             price TEXT,
-            fecha_agregado TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (appid) REFERENCES steam_games (appid)
+            fecha_agregado TIMESTAMP DEFAULT CURRENT_TIMESTAMP     
         ) 
     `);
 
