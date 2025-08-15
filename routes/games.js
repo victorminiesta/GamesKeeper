@@ -5,7 +5,7 @@ const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('./data/db.sqlite3');
 
 router.get('/', (req, res) => {
-    db.all('SELECT * FROM mis_juegos', [], (err, rows) => {
+    db.all('SELECT * FROM mis_juegos WHERE appid IN (SELECT appid FROM steam_games WHERE favoritos = 1)', [], (err, rows) => {
         if (err) {
             console.error('Error al obtener juegos:', err.message);
             return res.status(500).json({ error: 'Error interno al obtener juegos' });
@@ -88,31 +88,20 @@ router.post('/:appid', async (req, res) => {
     }
 });
 
-router.delete('/:appid', (req, res) => {
+router.put('/:appid', (req, res) => {
     const { appid } = req.params;
-
-    db.run(
-        'DELETE FROM mis_juegos WHERE appid = ?',
-        [appid],
-        function (err) {
-            if (err) {
-                console.error(err);
-                return res.status(500).json({ error: 'Error al eliminar el juego' });
-            }
-
-            db.run(
-                'UPDATE steam_games SET favoritos = 0 WHERE appid = ?',
-                [appid],
-                function (err) {
-                    if (err) {
-                        console.error(err);
-                        return res.status(500).json({ error: 'Error al actualizar favoritos' });
-                    }
-                    res.json({ message: 'Juego eliminado correctamente' });
+        db.run(
+            'UPDATE steam_games SET favoritos = 0 WHERE appid = ?',
+            [appid],
+            function (err) {
+                if (err) {
+                    console.error(err);
+                    return res.status(500).json({ error: 'Error al actualizar favoritos' });
                 }
-            );
+                res.json({ message: 'Juego eliminado correctamente' });
+            }
+        );
         }
     );
-})
 
 module.exports = router;

@@ -1,7 +1,7 @@
 async function eliminarJuego(appid) {
     if (!confirm("¿Seguro que quieres eliminar este juego de favoritos?")) return;
     const res = await fetch(`/api/games/${appid}`, {
-        method: 'DELETE'
+        method: 'PUT'
     });
     if (res.ok) {
         loadGames();
