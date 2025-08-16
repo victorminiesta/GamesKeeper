@@ -32,11 +32,12 @@ async function buscarJuegos() {
         }
 
         div.innerHTML = juegos.map(juego => 
-            `<div class="game-card">
-                <h3>${juego.name}</h3>
-                <button onclick='añadirJuego(${juego.appid})'>Añadir</button>
-            </div>`
-        ).join('');
+            `<div class="col-md-4">
+                <div class="card shadow-lg h-100 text-white" style="background: linear-gradient(135deg, #6a11cb, #2575fc); border-radius: 12px; padding: 20px;">
+                    <h3 class="mb-3">${juego.name}</h3>
+                    <button class="btn btn-success w-100 fw-bold" onclick="añadirJuego(${juego.appid})">⚡ Añadir</button>
+                </div>
+            </div>`).join('');
     }
     catch (err) {
         console.error('Error al buscar juegos: ', err);
