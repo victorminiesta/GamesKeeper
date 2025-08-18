@@ -5,7 +5,7 @@ const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('./data/db.sqlite3');
 
 router.get('/', (req, res) => {
-    db.all('SELECT * FROM mis_juegos WHERE appid IN (SELECT appid FROM steam_games WHERE favoritos = 1)', [], (err, rows) => {
+    db.all('SELECT * FROM mis_juegos WHERE appid IN (SELECT appid FROM steam_games WHERE favoritos = 1) ORDER BY nombre COLLATE NOCASE ASC', [], (err, rows) => {
         if (err) {
             console.error('Error al obtener juegos:', err.message);
             return res.status(500).json({ error: 'Error interno al obtener juegos' });
@@ -27,7 +27,8 @@ router.get('/buscar', (req, res) => {
         SELECT appid, name FROM steam_games
         WHERE name LIKE ?
         AND favoritos = 0 -- Solo juegos que no están en favoritos
-        LIMIT 400
+        ORDER BY name COLLATE NOCASE ASC
+        LIMIT 400 
     `;
 
     const searchTerm = `%${query}%`;

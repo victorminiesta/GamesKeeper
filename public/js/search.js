@@ -1,3 +1,13 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('searchInput');
+
+    searchInput.addEventListener('input', () => {
+        buscarJuegos();
+    });
+
+});
+
+
 async function añadirJuego(appid) {
     const res = await fetch(`/api/games/${appid}`, {
         method: 'POST',
@@ -14,13 +24,11 @@ async function buscarJuegos() {
     const div = document.getElementById('results');
 
     if (!query) {
-        div.innerHTML = '<p>Escribe algo para buscar</p>';
+        div.innerHTML = '<h2 class="text-center">Escribe algo para buscar</h2>';
         return;
     }
 
-    div.innerHTML = '<p>Buscando.</p>';
-    div.innerHTML = '<p>Buscando..</p>';
-    div.innerHTML = '<p>Buscando...</p>';
+    div.innerHTML = '<h3 class="text-center">Buscando...</h3>';
 
     try {
         const res = await fetch(`/api/games/buscar?q=${encodeURIComponent(query)}`);
