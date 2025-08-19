@@ -1,6 +1,7 @@
-const express = require('express');
+import express from 'express';
+import sqlite3 from 'sqlite3';
+
 const router = express.Router();
-const sqlite3 = require('sqlite3').verbose();
 
 const db = new sqlite3.Database('./data/db.sqlite3');
 
@@ -105,4 +106,4 @@ router.put('/:appid', (req, res) => {
         }
     );
 
-module.exports = router;
+export default router;
