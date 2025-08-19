@@ -24,6 +24,11 @@ async function loadGames() {
 
             col.innerHTML = `
                 <div class="card bg-secondary text-white h-100">
+
+                <button onclick="eliminarJuego(${game.appid})" class="btn btn-sm btn-light text-dark position-absolute top-0 end-0 m-2 rounded shadow">
+                    ❌
+                </button>
+
                     <img src="${game.header_image}" class="card-img-top" alt="${game.nombre}">
                     <div class="card-body">
                         <h5 class="card-title">${game.nombre}</h5>
@@ -32,7 +37,6 @@ async function loadGames() {
                     <div class="card-footer">
                         Precio: <span class="badge bg-info"> ${game.price || 'Gratis'}</span>
                     </div>
-                    <button onclick="eliminarJuego(${game.appid})" class="btn btn-danger">Eliminar</button>
                 </div>
             `;
             gamesContainer.appendChild(col);
