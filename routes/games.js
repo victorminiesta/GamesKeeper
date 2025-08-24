@@ -5,16 +5,59 @@ const router = express.Router();
 
 const db = new sqlite3.Database('./data/db.sqlite3');
 
+const CACHE_EXPIRATION = 60 * 60 * 1000; // 1 hora en milisegundos
+
 router.get('/', (req, res) => {
-    db.all('SELECT * FROM mis_juegos WHERE appid IN (SELECT appid FROM steam_games WHERE favoritos = 1) ORDER BY nombre COLLATE NOCASE ASC', [], (err, rows) => {
-        if (err) {
-            console.error('Error al obtener juegos:', err.message);
-            return res.status(500).json({ error: 'Error interno al obtener juegos' });
+    db.all(
+        'SELECT * FROM mis_juegos WHERE appid IN (SELECT appid FROM steam_games WHERE favoritos = 1) ORDER BY nombre COLLATE NOCASE ASC',
+        [],
+        async (err, rows) => {
+            if (err) {
+                console.error('Error al obtener juegos:', err.message);
+                return res.status(500).json({ error: 'Error interno al obtener juegos' });
+            }
+
+            const ahora = Date.now();
+
+            const resultados = await Promise.all(
+                rows.map(async (juego) => {
+                    // Si no tiene last_updated o ha pasado más de 1 hora → actualizar
+                    if (!juego.last_updated || (ahora - juego.last_updated) > CACHE_EXPIRATION) {
+                        try {
+                            const url = `https://store.steampowered.com/api/appdetails?appids=${juego.appid}&cc=es&l=spanish`;
+                            const resp = await fetch(url);
+                            const data = await resp.json();
+                            const detalles = data[juego.appid]?.data;
+
+                            if (detalles && detalles.price_overview) {
+                                const price = detalles.price_overview.final_formatted || 'Gratis';
+                                const discount = detalles.price_overview.discount_percent || 0;
+
+                                // Actualizamos en la base de datos
+                                db.run(
+                                    `UPDATE mis_juegos SET price = ?, discount_percent = ?, last_updated = ? WHERE appid = ?`,
+                                    [price, discount, ahora, juego.appid]
+                                );
+
+                                return {
+                                    ...juego,
+                                    price,
+                                    discount_percent: discount
+                                };
+                            }
+                        } catch (error) {
+                            console.error(`Error al consultar API Steam para ${juego.appid}:`, error);
+                        }
+                    }
+
+                    // Si no necesita actualización, devolvemos tal cual
+                    return juego;
+                })
+            );
+
+            res.json(resultados);
         }
-        else {
-            res.json(rows);
-        }
-    });
+    );
 });
 
 router.get('/buscar', (req, res) => {

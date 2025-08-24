@@ -1,5 +1,5 @@
-const sqlite3 = require('sqlite3').verbose();
-const fs = require('fs');
+import sqlite3 from 'sqlite3';
+sqlite3.verbose();
 
 const db = new sqlite3.Database('./data/db.sqlite3', (err) => {
     if (err)  {
@@ -15,7 +15,8 @@ function limpiarNombreJuego(nombre) {
         .toLowerCase()
         .normalize('NFD')                  
         .replace(/[\u0300-\u036f]/g, '')     
-        .replace(/[™:\/\-\(\)]+/g, '')  
+        .replace(/[™:®\/\(\)]+/g, '')  
+        .replace(/-/g, ' ')  
         .replace(/[’‘]/g, "'")              
         .trim();
 }

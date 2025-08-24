@@ -19,6 +19,7 @@ async function loadGames() {
         gamesContainer.innerHTML = '';
 
         games.forEach(game => {
+            console.log(game);
             const col = document.createElement('div');
             col.className = 'col-md-4 mb-4';
 
@@ -36,6 +37,7 @@ async function loadGames() {
                     </div>
                     <div class="card-footer">
                         Precio: <span class="badge bg-info"> ${game.price || 'Gratis'}</span>
+                        ${game.discount_percent > 0 ? `<span class="badge bg-success ms-2">🔥 Oferta: ${game.discount_percent}%</span>` : ''}
                     </div>
                 </div>
             `;
