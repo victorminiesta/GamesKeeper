@@ -10,6 +10,18 @@ async function eliminarJuego(appid) {
     }
 }
 
+function formatearFecha(fechaOriginal) {
+    const fecha = new Date(fechaOriginal);
+
+    const horaEspania = new Date(fechaOriginal);
+    horaEspania.setHours(horaEspania.getHours() + 2);
+
+    const dia = fecha.toLocaleDateString('es-ES',{ year: 'numeric', month: 'long', day: '2-digit', timeZone: 'Europe/Madrid'});
+    const hora = horaEspania.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Madrid' });
+
+    return `${dia} ${hora}`;
+}
+
 async function loadGames() {
     try {
         const res = await fetch('api/games');
@@ -19,9 +31,8 @@ async function loadGames() {
         gamesContainer.innerHTML = '';
 
         games.forEach(game => {
-            console.log(game);
             const col = document.createElement('div');
-            col.className = 'col-md-4 mb-4';
+            col.className = 'col-12 col-md-6 col-lg-4 mb-4';
 
             col.innerHTML = `
                 <div class="card bg-secondary text-white h-100">
@@ -32,6 +43,7 @@ async function loadGames() {
 
                     <img src="${game.header_image}" class="card-img-top" alt="${game.nombre}">
                     <div class="card-body">
+                        <p class="card-subtitle mb-2">${formatearFecha(game.fecha_agregado)}</p>
                         <h5 class="card-title">${game.nombre}</h5>
                         <p class="card-text">${game.description || 'Sin descripción'}</p>
                     </div>

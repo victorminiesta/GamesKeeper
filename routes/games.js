@@ -1,13 +1,13 @@
 import express from 'express';
 import sqlite3 from 'sqlite3';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const router = express.Router();
 
-const db = new sqlite3.Database('./data/db.sqlite3');
+const db = new sqlite3.Database(process.env.DATA_BASE_PATH);
 
-const CACHE_EXPIRATION = 60 * 60 * 1000; // 1 hora en milisegundos
-
-router.get('/', (req, res) => {
+router.get('/', (req, res) => { 
     db.all(
         'SELECT * FROM mis_juegos WHERE appid IN (SELECT appid FROM steam_games WHERE favoritos = 1) ORDER BY nombre COLLATE NOCASE ASC',
         [],
@@ -19,41 +19,58 @@ router.get('/', (req, res) => {
 
             const ahora = Date.now();
 
-            const resultados = await Promise.all(
-                rows.map(async (juego) => {
-                    // Si no tiene last_updated o ha pasado más de 1 hora → actualizar
-                    if (!juego.last_updated || (ahora - juego.last_updated) > CACHE_EXPIRATION) {
-                        try {
-                            const url = `https://store.steampowered.com/api/appdetails?appids=${juego.appid}&cc=es&l=spanish`;
-                            const resp = await fetch(url);
-                            const data = await resp.json();
-                            const detalles = data[juego.appid]?.data;
+            const chunkSize = 10;
+            let resultados = [];
 
-                            if (detalles && detalles.price_overview) {
-                                const price = detalles.price_overview.final_formatted || 'Gratis';
-                                const discount = detalles.price_overview.discount_percent || 0;
+            for (let i = 0; i < rows.length; i += chunkSize) {
+                const chunk = rows.slice(i, i + chunkSize);
 
-                                // Actualizamos en la base de datos
-                                db.run(
-                                    `UPDATE mis_juegos SET price = ?, discount_percent = ?, last_updated = ? WHERE appid = ?`,
-                                    [price, discount, ahora, juego.appid]
-                                );
+                const resultadosChunk = await Promise.all(
+                    chunk.map(async (juego) => {
+                        const cacheExpiration = Number(process.env.CACHE_EXPIRATION) || 3600000; // 1 hora por defecto
+                        const ultimaActualizacion = Number(juego.last_updated);
 
-                                return {
-                                    ...juego,
-                                    price,
-                                    discount_percent: discount
-                                };
+                        // Si no tiene last_updated o ha pasado más de 1 hora → actualizar
+                        if (!ultimaActualizacion || (ahora - ultimaActualizacion) > cacheExpiration) {
+                            console.log("actualizando el juego", juego.nombre);
+                            try {
+                                const url = `https://store.steampowered.com/api/appdetails?appids=${juego.appid}&cc=es&l=spanish`;
+                                const resp = await fetch(url);
+                                const data = await resp.json();
+                                const detalles = data[juego.appid]?.data;
+
+                                if (detalles && detalles.price_overview) {
+                                    const price = detalles.price_overview.final_formatted || 'Gratis';
+                                    const discount = detalles.price_overview.discount_percent || 0;
+
+                                    // Actualizamos en la base de datos
+                                    db.run(
+                                        `UPDATE mis_juegos 
+                                        SET price = ?, discount_percent = ?, last_updated = ? 
+                                        WHERE appid = ?`,
+                                        [price, discount, ahora, juego.appid]
+                                    );
+
+                                    console.log("Juego actualizado:", juego.nombre);
+                                    
+                                    return {
+                                        ...juego,
+                                        price,
+                                        discount_percent: discount
+                                    };
+                                }
+                            } catch (error) {
+                                console.error(`Error al consultar API Steam para ${juego.appid}:`, error);
                             }
-                        } catch (error) {
-                            console.error(`Error al consultar API Steam para ${juego.appid}:`, error);
                         }
-                    }
 
-                    // Si no necesita actualización, devolvemos tal cual
-                    return juego;
-                })
-            );
+                        // Si no necesita actualización, devolvemos tal cual
+                        return juego;
+                    })
+                );
+
+                resultados = resultados.concat(resultadosChunk);
+            }
 
             res.json(resultados);
         }
