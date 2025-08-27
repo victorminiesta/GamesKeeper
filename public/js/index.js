@@ -14,7 +14,7 @@ function formatearFecha(fechaOriginal) {
     const fecha = new Date(fechaOriginal);
 
     const horaEspania = new Date(fechaOriginal);
-    horaEspania.setHours(horaEspania.getHours() + 2);
+    horaEspania.setHours(horaEspania.getHours());
 
     const dia = fecha.toLocaleDateString('es-ES',{ year: 'numeric', month: 'long', day: '2-digit', timeZone: 'Europe/Madrid'});
     const hora = horaEspania.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Madrid' });
@@ -48,7 +48,7 @@ async function loadGames() {
                         <p class="card-text">${game.description || 'Sin descripción'}</p>
                     </div>
                     <div class="card-footer">
-                        Precio: <span class="badge bg-info"> ${game.price || 'Gratis'}</span>
+                        Precio: <span class="badge bg-primary"> ${game.price || 'Gratis'}</span>
                         ${game.discount_percent > 0 ? `<span class="badge bg-success ms-2">🔥 Oferta: ${game.discount_percent}%</span>` : ''}
                     </div>
                 </div>

@@ -1,0 +1,9 @@
+#btnAñadirJuego {
+    background-color: #583586;
+    color: white;
+}
+
+#btnAñadirJuego:hover {
+    background-color: #5f3f8a;
+    color: white;
+}
