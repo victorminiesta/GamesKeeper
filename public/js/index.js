@@ -37,7 +37,7 @@ async function loadGames() {
             col.innerHTML = `
                 <div class="card bg-secondary text-white h-100">
 
-                <button onclick="eliminarJuego(${game.appid})" class="btn btn-sm btn-light text-dark position-absolute top-0 end-0 m-2 rounded shadow">
+                <button onclick="eliminarJuego(${game.appid})" class="btn btn-sm bg-light bg-opacity-75 text-dark position-absolute top-0 end-0 m-2 rounded shadow">
                     ❌
                 </button>
 

@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import fs from 'fs';
 import games from './routes/games.js';
+import perfil from './routes/perfil.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -17,9 +18,14 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use('/api/games', games);
+app.use('/api/perfil', perfil);
 
 app.get('/buscar', (req, res) => {
   res.sendFile(__dirname + '/public/buscar.html');
+});
+
+app.get('/perfil', (req, res) => {
+  res.sendFile(__dirname + '/public/perfil.html');
 });
 
 if (!fs.existsSync('./data/db.sqlite3')) {

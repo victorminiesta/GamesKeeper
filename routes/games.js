@@ -27,10 +27,10 @@ router.get('/', (req, res) => {
 
                 const resultadosChunk = await Promise.all(
                     chunk.map(async (juego) => {
-                        const cacheExpiration = Number(process.env.CACHE_EXPIRATION) || 3600000; // 1 hora por defecto
+                        const cacheExpiration = Number(process.env.CACHE_EXPIRATION) || 86400000; // 1 día por defecto
                         const ultimaActualizacion = Number(juego.last_updated);
 
-                        // Si no tiene last_updated o ha pasado más de 1 hora → actualizar
+                        // Si no tiene last_updated o ha pasado más de 1 día actualizamos
                         if (!ultimaActualizacion || (ahora - ultimaActualizacion) > cacheExpiration) {
                             console.log("actualizando el juego", juego.nombre);
                             try {
@@ -140,6 +140,12 @@ router.post('/:appid', async (req, res) => {
                     if (err) console.error(err);
                 });
 
+                const ahora = Date.now();
+
+                db.run (`UPDATE mis_juegos SET fecha_agregado = ${ahora} WHERE appid = ?`, [appid], (err) => {
+                    if (err) console.error(err);
+                });
+
                 res.json({ message: 'Juego añadido a favoritos' });
             }
         );
@@ -163,7 +169,7 @@ router.put('/:appid', (req, res) => {
                 res.json({ message: 'Juego eliminado correctamente' });
             }
         );
-        }
-    );
+    }
+);
 
 export default router;
