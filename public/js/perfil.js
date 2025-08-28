@@ -15,7 +15,7 @@ const loadPerfil = async () => {
                             </span>
                         </p>
                         <p class="card-text mb-1">Creado: ${perfil.creado}</p>
-                        <p class="card-text mb-1">Última visita: ${perfil.ultimaVisita}</p>
+                        <p class="card-text mb-1">Última conexión: ${perfil.ultimaVisita}</p>
                         <a href="${perfil.perfilUrl}" target="_blank" class="btn btn-info btn-sm mt-2">Ver perfil en Steam</a>
                     </div>
                 </div>

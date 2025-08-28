@@ -22,6 +22,21 @@ function formatearFecha(fechaOriginal) {
     return `${dia} ${hora}`;
 }
 
+function toggleCarrito(appid) {
+    let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+
+    if (carrito.includes(appid)) {
+        carrito = carrito.filter(id => id !== appid);
+    }
+    else {
+        carrito.push(appid);
+    }
+
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+
+    loadGames();
+}
+
 async function loadGames() {
     try {
         const res = await fetch('api/games');
@@ -30,9 +45,13 @@ async function loadGames() {
         const gamesContainer = document.getElementById('games');
         gamesContainer.innerHTML = '';
 
+        const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+
         games.forEach(game => {
             const col = document.createElement('div');
             col.className = 'col-12 col-md-6 col-lg-4 mb-4';
+
+            const enCarrito = carrito.includes(game.appid);
 
             col.innerHTML = `
                 <div class="card bg-secondary text-white h-100">
@@ -50,6 +69,10 @@ async function loadGames() {
                     <div class="card-footer">
                         Precio: <span class="badge bg-primary"> ${game.price || 'Gratis'}</span>
                         ${game.discount_percent > 0 ? `<span class="badge bg-success ms-2">🔥 Oferta: ${game.discount_percent}%</span>` : ''}
+                        <button onclick="toggleCarrito(${game.appid})" 
+                            class="btn btn-sm ${enCarrito ?  'btn-comprado' : 'btn-no-comprado'} rounded shadow float-end">
+                            ⭐
+                        </button>
                     </div>
                 </div>
             `;
