@@ -4,6 +4,10 @@ async function eliminarJuego(appid) {
         method: 'PUT'
     });
     if (res.ok) {
+        let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+        carrito = carrito.filter(id => id !== appid);
+        localStorage.setItem('carrito', JSON.stringify(carrito));
+        
         loadGames();
     } else {
         console.error('Error al eliminar el juego');
