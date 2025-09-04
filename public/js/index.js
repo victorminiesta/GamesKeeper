@@ -60,9 +60,9 @@ async function loadGames() {
             col.innerHTML = `
                 <div class="card bg-secondary text-white h-100">
 
-                <button onclick="eliminarJuego(${game.appid})" class="btn btn-sm bg-light bg-opacity-75 text-dark position-absolute top-0 end-0 m-2 rounded shadow">
-                    ❌
-                </button>
+                    <button onclick="eliminarJuego(${game.appid})" class="btn btn-sm bg-light bg-opacity-75 text-dark position-absolute top-0 end-0 m-2 rounded shadow">
+                        ❌
+                    </button>
 
                     <img src="${game.header_image}" class="card-img-top" alt="${game.nombre}">
                     <div class="card-body">
@@ -71,11 +71,13 @@ async function loadGames() {
                         <p class="card-text">${game.description || 'Sin descripción'}</p>
                     </div>
                     <div class="card-footer">
-                        Precio: <span class="badge bg-primary"> ${game.price || 'Gratis'}</span>
-                        ${game.discount_percent > 0 ? `<span class="badge bg-success ms-2">🔥 Oferta: ${game.discount_percent}%</span>` : ''}
+                        <div class="mb-2">
+                            <span class="badge bg-primary fs-6">${game.price || 'Gratis'}</span>
+                            ${game.discount_percent > 0 ? `<span class="badge bg-success fs-6 mt-1">🔥 Oferta: ${game.discount_percent}%</span>` : ''}
+                        </div>
                         <button onclick="toggleCarrito(${game.appid})" 
-                            class="btn btn-sm ${enCarrito ?  'btn-comprado' : 'btn-no-comprado'} rounded shadow float-end">
-                            ⭐
+                            class="btn btn-sm ${enCarrito ? 'btn-comprado' : 'btn-no-comprado'} rounded shadow float-end">
+                            ${enCarrito ? 'Comprado ✅' : 'Comprar 🛒'}
                         </button>
                     </div>
                 </div>
