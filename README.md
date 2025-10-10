@@ -1,8 +1,8 @@
-# 🎮 Mis Juegos de Steam
+# 🎮 Mis Juegos
 
-Proyecto personal hecho en **Node.js + Express + SQLite3** para gestionar una lista de juegos de Steam.  
+Proyecto personal hecho en **Node.js + Express + SQLite3** para gestionar una lista de juegos de Steam y PS4/PS5.  
 La idea es tener un panel sencillo donde puedo:  
-- Buscar juegos de Steam.  
+- Buscar juegos de Steam o de play.  
 - Guardarlos en mi base de datos local.  
 - Marcar favoritos o pendientes.  
 - Tener una interfaz limpia y simple con **Bootstrap**.  
