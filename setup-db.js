@@ -29,7 +29,8 @@ db.serialize(() => {
             price TEXT,
             discount_percent INTEGER DEFAULT 0,
             last_updated INTEGER,
-            fecha_agregado TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            fecha_agregado TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            plataforma TEXT default 'steam',
         ) 
     `);
 

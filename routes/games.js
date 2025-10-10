@@ -121,14 +121,15 @@ router.post('/:appid', async (req, res) => {
         const data = gameData[appid].data;
 
         db.run(`
-            INSERT OR IGNORE INTO mis_juegos (appid, nombre, description, header_image, price)
+            INSERT OR IGNORE INTO mis_juegos (appid, nombre, description, header_image, price, plataforma)
             VALUES (?, ?, ?, ?, ?)`, 
             [
                 appid,
                 data.name,
                 data.short_description || '',
                 data.header_image,
-                data.price_overview ? `${data.price_overview.final / 100}€` : 'Gratis'
+                data.price_overview ? `${data.price_overview.final / 100}€` : 'Gratis',
+                "steam"
             ],
             (err) => {
                 if (err) {
