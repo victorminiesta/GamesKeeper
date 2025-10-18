@@ -8,6 +8,24 @@
     color: white;
 }
 
+#btnAñadirJuegoPlay {
+    background-color: #0050b9;
+    color: white;
+}
+
+#btnAñadirJuegoPlay:hover {
+    background-color: #2672d4;
+    color: white;
+}
+
+#precio{
+    background-color: #ce2a0d;
+    color: white;
+    font-weight: 600;
+    padding: 0.4rem 0.8rem;
+    border-radius: 5px;
+}
+
 /* Botón NO comprado */
 .btn-no-comprado {
     background: linear-gradient(145deg, rgba(155,89,182,0.9), rgba(142,68,173,0.85));

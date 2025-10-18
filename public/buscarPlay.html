@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscar Juego de Play</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-dark text-white">
+    <div class="container my-5">
+        <h1 class="text-center mb-4">🎮 Buscar juegos de PlayStation</h1>
+        <p class="text-center text-muted">Encuentra juegos de PS4 y PS5 y añádelos a tu lista.</p>
+
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-8">
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    class="form-control form-control-lg" 
+                    placeholder="Escribe el nombre del juego (ej: God of War, Elden Ring...)"
+                >
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-primary btn-lg w-100" onclick="buscarJuego()">Buscar</button>
+            </div>
+        </div>
+
+        <div id="results" class="mt-4"></div>
+
+        <div class="text-center mt-4">
+            <a href="index.html" class="btn btn-secondary">⬅ Volver</a>
+        </div>
+    </div>
+
+    <script src="js/searchPlay.js"></script>
+</body>
+</html>

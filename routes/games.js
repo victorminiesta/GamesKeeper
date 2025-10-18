@@ -9,7 +9,9 @@ const db = new sqlite3.Database(process.env.DATA_BASE_PATH);
 
 router.get('/', (req, res) => { 
     db.all(
-        'SELECT * FROM mis_juegos WHERE appid IN (SELECT appid FROM steam_games WHERE favoritos = 1) ORDER BY nombre COLLATE NOCASE ASC',
+        `SELECT * FROM mis_juegos WHERE appid IN (SELECT appid FROM steam_games WHERE favoritos = 1) 
+            OR plataforma IN ('ps4', 'ps5') 
+        ORDER BY nombre COLLATE NOCASE ASC`,
         [],
         async (err, rows) => {
             if (err) {
@@ -121,7 +123,7 @@ router.post('/:appid', async (req, res) => {
         const data = gameData[appid].data;
 
         db.run(`
-            INSERT OR IGNORE INTO mis_juegos (appid, nombre, description, header_image, price, plataforma)
+            INSERT OR IGNORE INTO mis_juegos (appid, nombre, description, header_image, price)
             VALUES (?, ?, ?, ?, ?)`, 
             [
                 appid,
@@ -129,7 +131,6 @@ router.post('/:appid', async (req, res) => {
                 data.short_description || '',
                 data.header_image,
                 data.price_overview ? `${data.price_overview.final / 100}€` : 'Gratis',
-                "steam"
             ],
             (err) => {
                 if (err) {

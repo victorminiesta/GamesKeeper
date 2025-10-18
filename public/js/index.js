@@ -72,7 +72,7 @@ async function loadGames() {
                     </div>
                     <div class="card-footer">
                         <div class="mb-2">
-                            <span class="badge bg-primary fs-6">${game.price || 'Gratis'}</span>
+                            <span class="badge fs-6" id="precio">${game.price || 'Gratis'}</span>
                             ${game.discount_percent > 0 ? `<span class="badge bg-success fs-6 mt-1">🔥 Oferta: ${game.discount_percent}%</span>` : ''}
                         ${game.platform === 'ps4'
                             ? `<span class="badge bg-primary text-white fs-6 mt-1"></span>PS4</span>`

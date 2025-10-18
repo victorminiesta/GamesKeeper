@@ -4,6 +4,7 @@ import cors from 'cors';
 import fs from 'fs';
 import games from './routes/games.js';
 import perfil from './routes/perfil.js';
+import gamesPlay from './routes/gamesPlay.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -19,9 +20,14 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use('/api/games', games);
 app.use('/api/perfil', perfil);
+app.use('/api/play', gamesPlay);
 
 app.get('/buscar', (req, res) => {
   res.sendFile(__dirname + '/public/buscar.html');
+});
+
+app.get('/buscarPlay', (req, res) => {
+  res.sendFile(__dirname + '/public/buscarPlay.html');
 });
 
 app.get('/perfil', (req, res) => {
