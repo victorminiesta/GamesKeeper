@@ -20,6 +20,14 @@ db.serialize(() => {
         )    
     `);
 
+    db.run(`
+        CREATE TABLE IF NOT EXISTS play_games (
+            ppid INTEGER PRIMARY KEY,
+            name TEXT NOT NULL,
+            favoritos INTEGER DEFAULT 0
+        )    
+    `);
+
     db.run (`
         CREATE TABLE IF NOT EXISTS mis_juegos (
             appid INTEGER NOT NULL PRIMARY KEY,

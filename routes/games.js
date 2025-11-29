@@ -9,7 +9,8 @@ const db = new sqlite3.Database(process.env.DATA_BASE_PATH);
 
 router.get('/', (req, res) => { 
     db.all(
-        `SELECT * FROM mis_juegos WHERE appid IN (SELECT appid FROM steam_games WHERE favoritos = 1) 
+        `SELECT * FROM mis_juegos WHERE appid IN (SELECT appid FROM steam_games WHERE favoritos = 1)
+            OR appid IN (SELECT ppid FROM play_games WHERE favoritos = 1)
             OR plataforma IN ('ps4', 'ps5') 
         ORDER BY nombre COLLATE NOCASE ASC`,
         [],
