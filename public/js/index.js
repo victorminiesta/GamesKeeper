@@ -74,12 +74,6 @@ async function loadGames() {
                         <div class="mb-2">
                             <span class="badge bg-primary fs-6">${game.price || 'Gratis'}</span>
                             ${game.discount_percent > 0 ? `<span class="badge bg-success fs-6 mt-1">🔥 Oferta: ${game.discount_percent}%</span>` : ''}
-                        ${game.platform === 'ps4'
-                            ? `<span class="badge bg-primary text-white fs-6 mt-1"></span>PS4</span>`
-                            : game.platform === 'ps5'
-                                ? `<span class="badge bg-info text-white fs-6 mt-1">PS5</span>`
-                                : `<span class="badge bg-dark text-white fs-6 mt-1">Steam</span>`
-                        }
                         </div>
                         <button onclick="toggleCarrito(${game.appid})" 
                             class="btn btn-sm ${enCarrito ? 'btn-comprado' : 'btn-no-comprado'} rounded shadow float-end">
