@@ -38,7 +38,7 @@ db.serialize(() => {
             username TEXT NOT NULL UNIQUE,
             email TEXT UNIQUE,
             password TEXT NOT NULL,
-            created_at DATETIME CURRENT_TIMESTAMP
+            created_at TIMESTAMP CURRENT_TIMESTAMP
         )
     `);
 
@@ -48,7 +48,7 @@ db.serialize(() => {
             user_id INTEGER NOT NULL,
             appid INTEGER NOT NULL,
             added_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            favoritos INTEGER DEFAULT 1,
+            favoritos BOOLEAN DEFAULT 1,
             UNIQUE(user_id, appid),
             FOREIGN KEY(user_id) REFERENCES users(id),
             FOREIGN KEY(appid) REFERENCES steam_games(appid)

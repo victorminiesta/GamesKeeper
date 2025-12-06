@@ -1,6 +1,6 @@
 async function eliminarJuego(appid) {
     if (!confirm("¿Seguro que quieres eliminar este juego de favoritos?")) return;
-    const res = await fetch(`/api/games/${appid}`, {
+    const res = await fetch(`/api/user/games/${appid}`, {
         method: 'PUT'
     });
     if (res.ok) {
@@ -43,9 +43,8 @@ function toggleCarrito(appid) {
 
 async function loadGames() {
     try {
-        const res = await fetch('api/games');
+        const res = await fetch('/api/user/games');
         const games = await res.json();
-
         const gamesContainer = document.getElementById('games');
         gamesContainer.innerHTML = '';
 

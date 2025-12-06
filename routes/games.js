@@ -7,7 +7,7 @@ const router = express.Router();
 
 const db = new sqlite3.Database(process.env.DATA_BASE_PATH);
 
-router.get('/', (req, res) => { 
+router.get('/all', (req, res) => { 
     db.all(
         'SELECT * FROM mis_juegos ORDER BY nombre COLLATE NOCASE ASC',
         [],

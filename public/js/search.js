@@ -9,15 +9,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 async function añadirJuego(appid) {
-    const res = await fetch(`/api/games/${appid}`, {
-        method: 'POST',
-    });
-    if (res.ok) {
-        alert('Juego añadido a favoritos');
-    } else {
-        alert('Error al añadir el juego');
+    try {
+        // 1️⃣ Primero añadirlo a mis_juegos
+        const resCache = await fetch(`/api/games/${appid}`, {
+            method: 'POST'
+        });
+
+        if (!resCache.ok) {
+            const data = await resCache.json();
+            alert('Error al añadir a mis_juegos: ' + (data.error || resCache.status));
+            return;
+        }
+
+        // 2️⃣ Luego añadirlo a user_games
+        const resUser = await fetch('/api/user/games/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ appid })
+        });
+
+        if (resUser.ok) {
+            alert('Juego añadido a favoritos');
+        } else {
+            const data = await resUser.json();
+            alert('Error al añadir a favoritos del usuario: ' + (data.error || resUser.status));
+        }
+
+    } catch (error) {
+        console.error(error);
+        alert('Error inesperado al añadir el juego');
     }
 }
+
 
 async function buscarJuegos() {
     const query = document.getElementById('searchInput').value.trim();

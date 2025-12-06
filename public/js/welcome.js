@@ -12,14 +12,14 @@ document.addEventListener('DOMContentLoaded', () => {
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const email = loginForm.email.value.trim();
+        const username = loginForm.username.value.trim();
         const password = loginForm.password.value.trim();
 
         try {
             const res = await fetch('/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
+                body: JSON.stringify({ username, password })
             });
 
             const data = await res.json();
