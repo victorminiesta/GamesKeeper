@@ -1,6 +1,6 @@
 # 🎮 Mis Juegos
 
-Proyecto personal hecho en **Node.js + Express + SQLite3** para gestionar una lista de juegos de Steam y PS4/PS5.  
+Proyecto personal hecho en **Node.js + Express + SQLite3** para gestionar una lista de juegos de Steam.  
 La idea es tener un panel sencillo donde puedo:  
 - Buscar juegos de Steam o de play.  
 - Guardarlos en mi base de datos local.  
@@ -20,8 +20,8 @@ La idea es tener un panel sencillo donde puedo:
 ## ⚙️ Instalación y uso
 1. Clonar el repositorio:
    ```bash
-   git clone https://github.com/victorminiesta/SteamKeeper.git
-   cd SteamKeeper
+   git clone https://github.com/victorminiesta/GamesKeeper.git
+   cd GamesKeeper
 
 2. Instalar dependencias:
    ```bash

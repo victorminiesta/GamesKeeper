@@ -9,7 +9,7 @@ const db = new sqlite3.Database(process.env.DATA_BASE_PATH);
 
 router.get('/', (req, res) => { 
     db.all(
-        'SELECT * FROM mis_juegos WHERE appid IN (SELECT appid FROM steam_games WHERE favoritos = 1) ORDER BY nombre COLLATE NOCASE ASC',
+        'SELECT * FROM mis_juegos ORDER BY nombre COLLATE NOCASE ASC',
         [],
         async (err, rows) => {
             if (err) {
@@ -87,7 +87,6 @@ router.get('/buscar', (req, res) => {
     const sql = `
         SELECT appid, name FROM steam_games
         WHERE name LIKE ?
-        AND favoritos = 0 -- Solo juegos que no están en favoritos
         ORDER BY name COLLATE NOCASE ASC
         LIMIT 400 
     `;
@@ -136,10 +135,6 @@ router.post('/:appid', async (req, res) => {
                     return res.status(500).json({ error: 'Error al añadir el juego' });
                 }
 
-                db.run (`UPDATE steam_games SET favoritos = 1 WHERE appid = ?`, [appid], (err) => {
-                    if (err) console.error(err);
-                });
-
                 const ahora = Date.now();
 
                 db.run (`UPDATE mis_juegos SET fecha_agregado = ${ahora} WHERE appid = ?`, [appid], (err) => {
@@ -155,21 +150,5 @@ router.post('/:appid', async (req, res) => {
         res.status(500).json({ error: 'Error interno al obtener datos del juego' });
     }
 });
-
-router.put('/:appid', (req, res) => {
-    const { appid } = req.params;
-        db.run(
-            'UPDATE steam_games SET favoritos = 0 WHERE appid = ?',
-            [appid],
-            function (err) {
-                if (err) {
-                    console.error(err);
-                    return res.status(500).json({ error: 'Error al actualizar favoritos' });
-                }
-                res.json({ message: 'Juego eliminado correctamente' });
-            }
-        );
-    }
-);
 
 export default router;
