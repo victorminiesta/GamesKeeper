@@ -1,0 +1,10 @@
+.link-hover {
+    color: #ffffff;
+    transition: color 0.2s ease, text-decoration-color 0.2s ease;
+    text-decoration: none;
+}
+
+.link-hover:hover {
+    color: #0d6efd; /* azul bootstrap */
+    text-decoration: underline;
+}

@@ -1,10 +1,15 @@
 import express from 'express';
+import sqlite3 from 'sqlite3';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const router = express.Router();
 
 const perfilApiUrl = process.env.PERFIL_API_URL;
 
-router.get('/', async (req, res) => {
+const db = new sqlite3.Database(process.env.DATA_BASE_PATH);
+
+router.get('/perfilSteam', async (req, res) => {
     try {
         const response = await fetch(perfilApiUrl);
         const data = await response.json();
@@ -23,6 +28,15 @@ router.get('/', async (req, res) => {
         console.error('Error al obtener perfil:', error);
         res.status(500).json({ error: 'Error interno al obtener perfil' });
     }
+});
+
+router.get('/me', (req, res) => {
+    if (!req.session.userId) return res.status(401).json({ error: 'No logueado' });
+
+    db.get(`SELECT id, username, email FROM users WHERE id = ?`, [req.session.userId], (err, user) => {
+        if (err) return res.status(500).json({ error: 'Error al obtener el usuario' });
+        res.json(user);
+    });
 });
 
 export default router;
