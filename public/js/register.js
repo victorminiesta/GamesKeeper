@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (res.ok) {
                     showMessage('Registro correcto, ya puedes iniciar sesión.', 'success');
-                    registerForm.reset();
+                    window.location.href = '/';
                 } else {
                     showMessage(data.error || 'Error en el registro.');
                 }

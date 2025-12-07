@@ -38,7 +38,7 @@ db.serialize(() => {
             username TEXT NOT NULL UNIQUE,
             email TEXT UNIQUE,
             password TEXT NOT NULL,
-            created_at TIMESTAMP CURRENT_TIMESTAMP
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     `);
 

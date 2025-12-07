@@ -1,6 +1,8 @@
 import express from 'express';
 import sqlite3 from 'sqlite3';
 import dotenv from 'dotenv';
+import { ensureAuth } from './auth.js';
+import bcrypt from 'bcrypt';
 dotenv.config();
 
 const router = express.Router();
@@ -37,6 +39,49 @@ router.get('/me', (req, res) => {
         if (err) return res.status(500).json({ error: 'Error al obtener el usuario' });
         res.json(user);
     });
+});
+
+router.patch('/update', ensureAuth, (req, res) => {
+    const userId = req.session.userId;
+    const { username, email, password } = req.body;
+
+    if (!username && !email && !password) {
+        return res.status(400).json({ error: 'No hay datos para actualizar' });
+    }
+
+    const updates = [];
+    const values = [];
+
+    if (username) {
+        updates.push('username = ?');
+        values.push(username);
+    }
+
+    if (email) {
+        updates.push('email = ?');
+        values.push(email);
+    }
+
+    const updateUser = () => {
+        const sql = `UPDATE users SET ${updates.join(', ')} WHERE id = ?`;
+        values.push(userId);
+        db.run(sql, values, function (err) {
+            if (err) return res.status(500).json({error: 'Error al actualizar el usuario' });
+            res.json({ ok: true });
+        });
+    };
+
+    if (password) {
+        bcrypt.hash(password, 10, (err, hashed) => {
+            if (err) return res.status(500).json({error: 'Error al actualizar la contraseña' });
+            updates.push('password = ?');
+            values.push(hashed);
+            updateUser();
+        });
+    }
+    else{
+        updateUser();
+    }
 });
 
 export default router;

@@ -77,6 +77,10 @@ app.get('/register', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'register.html'));
 });
 
+app.get('/perfil/editar', ensureLoggedIn, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'editarPerfil.html'));
+});
+
 // Archivos estáticos (pueden incluir CSS, JS, imágenes)
 app.use(express.static(path.join(__dirname, 'public')));
 
