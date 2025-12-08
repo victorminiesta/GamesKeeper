@@ -1,6 +1,6 @@
 const loadPerfil = async () => {
     try {
-        const res = await fetch('api/perfil');
+        const res = await fetch('/api/perfil/perfilSteam');
         const perfil = await res.json();
 
         document.getElementById("perfil").innerHTML = `

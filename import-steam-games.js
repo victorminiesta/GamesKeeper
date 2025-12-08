@@ -39,7 +39,7 @@ async function importarJuegos() {
         while (true) {
             const url = `https://api.steampowered.com/IStoreService/GetAppList/v1/?key=${apiKey}&max_results=50000&last_appid=${ultimaAppId}`;
 
-            console.log(`Solicitand: ${url}`);
+            console.log(`Solicitando: ${url}`);
 
             const res = await fetch(url);
             const data = await res.json();

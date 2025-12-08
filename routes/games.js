@@ -7,75 +7,75 @@ const router = express.Router();
 
 const db = new sqlite3.Database(process.env.DATA_BASE_PATH);
 
-router.get('/', (req, res) => { 
-    db.all(
-        'SELECT * FROM mis_juegos WHERE appid IN (SELECT appid FROM steam_games WHERE favoritos = 1) ORDER BY nombre COLLATE NOCASE ASC',
-        [],
-        async (err, rows) => {
-            if (err) {
-                console.error('Error al obtener juegos:', err.message);
-                return res.status(500).json({ error: 'Error interno al obtener juegos' });
-            }
+// router.get('/all', (req, res) => { 
+//     db.all(
+//         'SELECT * FROM mis_juegos ORDER BY nombre COLLATE NOCASE ASC',
+//         [],
+//         async (err, rows) => {
+//             if (err) {
+//                 console.error('Error al obtener juegos:', err.message);
+//                 return res.status(500).json({ error: 'Error interno al obtener juegos' });
+//             }
 
-            const ahora = Date.now();
+//             const ahora = Date.now();
 
-            const chunkSize = 10;
-            let resultados = [];
+//             const chunkSize = 10;
+//             let resultados = [];
 
-            for (let i = 0; i < rows.length; i += chunkSize) {
-                const chunk = rows.slice(i, i + chunkSize);
+//             for (let i = 0; i < rows.length; i += chunkSize) {
+//                 const chunk = rows.slice(i, i + chunkSize);
 
-                const resultadosChunk = await Promise.all(
-                    chunk.map(async (juego) => {
-                        const cacheExpiration = Number(process.env.CACHE_EXPIRATION) || 86400000; // 1 día por defecto
-                        const ultimaActualizacion = Number(juego.last_updated);
+//                 const resultadosChunk = await Promise.all(
+//                     chunk.map(async (juego) => {
+//                         const cacheExpiration = Number(process.env.CACHE_EXPIRATION) || 86400000; // 1 día por defecto
+//                         const ultimaActualizacion = Number(juego.last_updated);
 
-                        // Si no tiene last_updated o ha pasado más de 1 día actualizamos
-                        if (!ultimaActualizacion || (ahora - ultimaActualizacion) > cacheExpiration) {
-                            console.log("actualizando el juego", juego.nombre);
-                            try {
-                                const url = `https://store.steampowered.com/api/appdetails?appids=${juego.appid}&cc=es&l=spanish`;
-                                const resp = await fetch(url);
-                                const data = await resp.json();
-                                const detalles = data[juego.appid]?.data;
+//                         // Si no tiene last_updated o ha pasado más de 1 día actualizamos
+//                         if (!ultimaActualizacion || (ahora - ultimaActualizacion) > cacheExpiration) {
+//                             console.log("actualizando el juego", juego.nombre);
+//                             try {
+//                                 const url = `https://store.steampowered.com/api/appdetails?appids=${juego.appid}&cc=es&l=spanish`;
+//                                 const resp = await fetch(url);
+//                                 const data = await resp.json();
+//                                 const detalles = data[juego.appid]?.data;
 
-                                if (detalles && detalles.price_overview) {
-                                    const price = detalles.price_overview.final_formatted || 'Gratis';
-                                    const discount = detalles.price_overview.discount_percent || 0;
+//                                 if (detalles && detalles.price_overview) {
+//                                     const price = detalles.price_overview.final_formatted || 'Gratis';
+//                                     const discount = detalles.price_overview.discount_percent || 0;
 
-                                    // Actualizamos en la base de datos
-                                    db.run(
-                                        `UPDATE mis_juegos 
-                                        SET price = ?, discount_percent = ?, last_updated = ? 
-                                        WHERE appid = ?`,
-                                        [price, discount, ahora, juego.appid]
-                                    );
+//                                     // Actualizamos en la base de datos
+//                                     db.run(
+//                                         `UPDATE mis_juegos 
+//                                         SET price = ?, discount_percent = ?, last_updated = ? 
+//                                         WHERE appid = ?`,
+//                                         [price, discount, ahora, juego.appid]
+//                                     );
 
-                                    console.log("Juego actualizado:", juego.nombre);
+//                                     console.log("Juego actualizado:", juego.nombre);
                                     
-                                    return {
-                                        ...juego,
-                                        price,
-                                        discount_percent: discount
-                                    };
-                                }
-                            } catch (error) {
-                                console.error(`Error al consultar API Steam para ${juego.appid}:`, error);
-                            }
-                        }
+//                                     return {
+//                                         ...juego,
+//                                         price,
+//                                         discount_percent: discount
+//                                     };
+//                                 }
+//                             } catch (error) {
+//                                 console.error(`Error al consultar API Steam para ${juego.appid}:`, error);
+//                             }
+//                         }
 
-                        // Si no necesita actualización, devolvemos tal cual
-                        return juego;
-                    })
-                );
+//                         // Si no necesita actualización, devolvemos tal cual
+//                         return juego;
+//                     })
+//                 );
 
-                resultados = resultados.concat(resultadosChunk);
-            }
+//                 resultados = resultados.concat(resultadosChunk);
+//             }
 
-            res.json(resultados);
-        }
-    );
-});
+//             res.json(resultados);
+//         }
+//     );
+// });
 
 router.get('/buscar', (req, res) => {
     const query = req.query.q;
@@ -87,7 +87,6 @@ router.get('/buscar', (req, res) => {
     const sql = `
         SELECT appid, name FROM steam_games
         WHERE name LIKE ?
-        AND favoritos = 0 -- Solo juegos que no están en favoritos
         ORDER BY name COLLATE NOCASE ASC
         LIMIT 400 
     `;
@@ -136,10 +135,6 @@ router.post('/:appid', async (req, res) => {
                     return res.status(500).json({ error: 'Error al añadir el juego' });
                 }
 
-                db.run (`UPDATE steam_games SET favoritos = 1 WHERE appid = ?`, [appid], (err) => {
-                    if (err) console.error(err);
-                });
-
                 const ahora = Date.now();
 
                 db.run (`UPDATE mis_juegos SET fecha_agregado = ${ahora} WHERE appid = ?`, [appid], (err) => {
@@ -155,21 +150,5 @@ router.post('/:appid', async (req, res) => {
         res.status(500).json({ error: 'Error interno al obtener datos del juego' });
     }
 });
-
-router.put('/:appid', (req, res) => {
-    const { appid } = req.params;
-        db.run(
-            'UPDATE steam_games SET favoritos = 0 WHERE appid = ?',
-            [appid],
-            function (err) {
-                if (err) {
-                    console.error(err);
-                    return res.status(500).json({ error: 'Error al actualizar favoritos' });
-                }
-                res.json({ message: 'Juego eliminado correctamente' });
-            }
-        );
-    }
-);
 
 export default router;
